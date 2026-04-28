@@ -1,0 +1,16 @@
+.git
+.gitignore
+.gitattributes
+.gcloudignore
+.pytest_cache
+__pycache__
+*.pyc
+*.pyo
+.env
+.venv
+tests/
+README.md
+deploy.sh
+*.md
+.dockerignore
+static/assets/*.png
