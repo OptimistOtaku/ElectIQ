@@ -13,4 +13,3 @@ README.md
 deploy.sh
 *.md
 .dockerignore
-static/assets/*.png
