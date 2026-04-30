@@ -1,11 +1,12 @@
 """
 ElectIQ — India Election Process Education Assistant
-Backend powered by Google Gemini 3 Flash + Google Cloud
+Backend powered by Google Gemini 2.5 Flash + Google Cloud
 """
 
 import os
 import json
 import logging
+import time
 import requests as http_requests
 from flask import Flask, request, jsonify, send_from_directory, Response
 from flask_cors import CORS
@@ -51,6 +52,10 @@ MODEL_ID = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 # Google Custom Search config
 GOOGLE_SEARCH_API_KEY = os.environ.get("GOOGLE_SEARCH_API_KEY", "")
 GOOGLE_SEARCH_CX = os.environ.get("GOOGLE_SEARCH_CX", "")
+
+# Elections cache — 1 hour TTL
+_elections_cache = {"data": None, "ts": 0}
+ELECTIONS_CACHE_TTL = 3600  # seconds
 
 # ──────────────────────────────────────────────
 # System Prompts
@@ -384,6 +389,96 @@ def search():
     except Exception as e:
         logger.error(f"Search error: {e}")
         return jsonify({"error": str(e)}), 500
+
+
+# ──────────────────────────────────────────────
+# Routes — Live Election Data (Gemini + Search Grounding)
+# ──────────────────────────────────────────────
+@app.route("/api/elections", methods=["GET"])
+def get_elections():
+    """Return live current + upcoming Indian election data via Gemini 2.5 Flash with Google Search grounding."""
+    global _elections_cache
+
+    # Serve from cache if fresh
+    if _elections_cache["data"] and (time.time() - _elections_cache["ts"]) < ELECTIONS_CACHE_TTL:
+        return jsonify(_elections_cache["data"])
+
+    if not client:
+        return jsonify({"error": "AI not configured"}), 500
+
+    today = time.strftime("%d %B %Y")
+    prompt = f"""Today is {today}.
+
+Search for the latest information on Indian state and national elections.
+Return ONLY a valid JSON object (no markdown, no explanation) with this exact structure:
+
+{{
+  "current": [
+    {{
+      "state": "State name in English",
+      "state_hi": "State name in Hindi (Devanagari)",
+      "election_type": "Assembly" | "Lok Sabha" | "By-election" | "Panchayat",
+      "status": "voting_today" | "voting_soon" | "counting" | "results_out",
+      "status_label": "Short human-readable status in English",
+      "polling_date": "DD Month YYYY or 'Phase 1: DD Mon, Phase 2: DD Mon'",
+      "counting_date": "DD Month YYYY",
+      "total_seats": 123,
+      "phases": 1,
+      "note": "Brief context e.g. 'Phase 2 of 3' or 'Results declared'"
+    }}
+  ],
+  "upcoming": [
+    {{
+      "state": "State name in English",
+      "state_hi": "State name in Hindi (Devanagari)",
+      "election_type": "Assembly" | "Lok Sabha" | "By-election",
+      "expected_period": "Month–Month YYYY",
+      "total_seats": 123,
+      "note": "Brief context"
+    }}
+  ],
+  "next_major_event": {{
+    "name": "Event name e.g. 'West Bengal Counting Day'",
+    "name_hi": "Event name in Hindi",
+    "date_iso": "YYYY-MM-DDTHH:MM:SS+05:30"
+  }}
+}}
+
+Include all elections that are currently in progress (nomination, campaigning, polling, or counting phases) AND confirmed upcoming elections in the next 12 months.
+Be accurate and use official ECI sources. Return ONLY the JSON."""
+
+    try:
+        response = client.models.generate_content(
+            model=MODEL_ID,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                max_output_tokens=2048,
+                temperature=0.1,
+                tools=[types.Tool(google_search=types.GoogleSearch())],
+                thinking_config=types.ThinkingConfig(thinking_budget=0),
+            ),
+        )
+        text = response.text.strip()
+        # Strip markdown fences if present
+        if text.startswith("```"):
+            text = text.split("\n", 1)[1] if "\n" in text else text[3:]
+        if text.endswith("```"):
+            text = text[:-3]
+        text = text.strip()
+
+        data = json.loads(text)
+        _elections_cache = {"data": data, "ts": time.time()}
+        return jsonify(data)
+
+    except json.JSONDecodeError as e:
+        logger.error(f"Elections JSON parse error: {e}")
+        return jsonify({"error": "Could not parse election data"}), 500
+    except Exception as e:
+        error_msg = str(e)
+        if '429' in error_msg or 'RESOURCE_EXHAUSTED' in error_msg:
+            error_msg = 'API rate limit reached. Please try again shortly.'
+        logger.error(f"Elections error: {e}")
+        return jsonify({"error": error_msg}), 500
 
 
 # ──────────────────────────────────────────────

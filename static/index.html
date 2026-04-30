@@ -862,7 +862,73 @@ h1 span { color: var(--saffron-strong); }
   .tl-dot { width: 26px; height: 26px; border-width: 5px; }
   .msg-bubble { max-width: 86%; }
 }
-</style>
+/* ── Language Toggle ── */
+.lang-toggle { display: flex; align-items: center; gap: 0; border: 1.5px solid var(--line); border-radius: 999px; overflow: hidden; flex-shrink: 0; }
+.lang-btn { border: 0; background: transparent; padding: 6px 13px; font-size: .82rem; font-weight: 800; color: var(--muted); cursor: pointer; transition: background .15s, color .15s; }
+.lang-btn.active { background: var(--chakra); color: #fff; }
+.lang-btn:hover:not(.active) { background: var(--chakra-soft); color: var(--chakra); }
+
+/* ── Election Tracker ── */
+.election-tracker { margin: 0 0 18px; }
+.tracker-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+.tracker-heading h2 { font-size: 1.2rem; margin: 0; }
+.tracker-heading p { color: var(--muted); font-size: .88rem; margin: 2px 0 0; }
+.tracker-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; }
+.tracker-scroll::-webkit-scrollbar { height: 4px; }
+.tracker-scroll::-webkit-scrollbar-track { background: transparent; }
+.tracker-scroll::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+.elec-card { flex: 0 0 200px; border: 1.5px solid var(--line); border-radius: 10px; padding: 14px; cursor: pointer; background: #fff; transition: border-color .2s, box-shadow .2s, transform .15s; position: relative; }
+.elec-card:hover { border-color: var(--chakra); box-shadow: 0 6px 22px rgba(30,64,175,.12); transform: translateY(-2px); }
+.elec-card.active { border-color: var(--chakra); background: var(--chakra-soft); }
+.elec-state { font-weight: 800; font-size: 1rem; line-height: 1.2; }
+.elec-state-hi { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+.elec-type { font-size: .78rem; font-weight: 700; color: var(--chakra); margin: 6px 0 4px; text-transform: uppercase; letter-spacing: .03em; }
+.elec-date { font-size: .82rem; color: #425063; }
+.elec-note { font-size: .78rem; color: var(--muted); margin-top: 4px; }
+.status-badge { display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; padding: 3px 9px; font-size: .74rem; font-weight: 800; margin-top: 8px; }
+.status-badge.voting_today { background: #fee2e2; color: #991b1b; }
+.status-badge.voting_soon  { background: #fef9c3; color: #854d0e; }
+.status-badge.counting     { background: #dbeafe; color: #1e40af; }
+.status-badge.results_out  { background: #dcfce7; color: #166534; }
+.status-dot-sm { width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: pulse 1.4s infinite; }
+.status-badge.voting_today .status-dot-sm,
+.status-badge.voting_soon .status-dot-sm  { animation: pulse 1.4s infinite; }
+.status-badge.counting .status-dot-sm,
+.status-badge.results_out .status-dot-sm  { animation: none; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
+
+/* Upcoming elections list */
+.upcoming-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.upcoming-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+.upcoming-state { font-weight: 800; font-size: .92rem; }
+.upcoming-state-hi { font-size: .76rem; color: var(--muted); }
+.upcoming-period { font-size: .82rem; font-weight: 700; color: var(--saffron-strong); white-space: nowrap; }
+
+/* Election detail panel */
+.elec-detail-panel { display: none; border: 1.5px solid var(--chakra); border-radius: 12px; padding: 20px; margin-top: 14px; background: #fff; animation: slideDown .2s ease; }
+.elec-detail-panel.open { display: block; }
+@keyframes slideDown { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+.detail-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.detail-state-name { font-size: 1.4rem; font-weight: 800; line-height: 1.2; }
+.detail-state-hi { font-size: .9rem; color: var(--muted); }
+.detail-close { border: 0; background: var(--wash); border-radius: 50%; width: 32px; height: 32px; font-size: 1rem; cursor: pointer; display: grid; place-items: center; flex-shrink: 0; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.detail-cell { padding: 10px 12px; background: var(--wash); border-radius: var(--radius); }
+.detail-label { font-size: .74rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 3px; }
+.detail-value { font-weight: 800; font-size: .95rem; }
+.detail-ask-btn { width: 100%; margin-top: 4px; }
+
+/* Skeleton loader */
+.skel { background: linear-gradient(90deg, #eef2f7 25%, #e2e8f0 50%, #eef2f7 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 8px; }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.skel-card { flex: 0 0 200px; height: 140px; border-radius: 10px; }
+
+@media (max-width: 640px) {
+  .detail-grid { grid-template-columns: 1fr; }
+  .tracker-scroll { gap: 10px; }
+  .elec-card { flex: 0 0 170px; }
+}
+
 </head>
 <body>
 <a class="skip-link" href="#main-content">Skip to content</a>
@@ -877,13 +943,17 @@ h1 span { color: var(--saffron-strong); }
         <div><div class="brand-title">ElectIQ</div><span class="brand-sub">India Election Intelligence</span></div>
       </div>
       <nav class="nav-tabs" aria-label="Primary navigation">
-        <button id="nav-home" class="active" onclick="showSection('home')">Overview</button>
-        <button id="nav-timeline" onclick="showSection('timeline')">Election Flow</button>
-        <button id="nav-chat" onclick="showSection('chat')">Ask AI</button>
-        <button id="nav-factcheck" onclick="showSection('factcheck')">Fact Check</button>
-        <button id="nav-quiz" onclick="showSection('quiz')">Quiz</button>
-        <button id="nav-resources" onclick="showSection('resources')">Resources</button>
+        <button id="nav-home" class="active" onclick="showSection('home')" data-i18n="nav_home">Overview</button>
+        <button id="nav-timeline" onclick="showSection('timeline')" data-i18n="nav_timeline">Election Flow</button>
+        <button id="nav-chat" onclick="showSection('chat')" data-i18n="nav_chat">Ask AI</button>
+        <button id="nav-factcheck" onclick="showSection('factcheck')" data-i18n="nav_factcheck">Fact Check</button>
+        <button id="nav-quiz" onclick="showSection('quiz')" data-i18n="nav_quiz">Quiz</button>
+        <button id="nav-resources" onclick="showSection('resources')" data-i18n="nav_resources">Resources</button>
       </nav>
+      <div class="lang-toggle" role="group" aria-label="Language toggle">
+        <button class="lang-btn active" id="lang-en" onclick="setLang('en')" aria-pressed="true">EN</button>
+        <button class="lang-btn" id="lang-hi" onclick="setLang('hi')" aria-pressed="false">हिं</button>
+      </div>
     </div>
   </header>
 
@@ -989,16 +1059,49 @@ h1 span { color: var(--saffron-strong); }
           <div class="metric-value">Plain</div>
           <div class="metric-note">Clear answers for citizens, students, and first-time voters.</div>
         </div>
-        <div class="card wide-card">
-          <div class="section-heading">
-            <div><h2>Election readiness snapshot</h2><p>A practical view of what voters usually need before, during, and after polling.</p></div>
+        <!-- ══ LIVE ELECTION TRACKER ══ -->
+        <div class="card wide-card election-tracker" id="tracker-wrap">
+          <div class="tracker-heading">
+            <div>
+              <h2 data-i18n="tracker_now">🗳️ Elections Happening Now</h2>
+              <p data-i18n="tracker_now_sub">Click any state for schedule details &amp; key dates</p>
+            </div>
           </div>
-          <div class="phase-chart">
-            <div class="phase-row"><div class="phase-label">Before poll</div><div class="bar saffron"><span></span></div><div class="phase-score">86%</div></div>
-            <div class="phase-row"><div class="phase-label">Polling day</div><div class="bar blue"><span></span></div><div class="phase-score">72%</div></div>
-            <div class="phase-row"><div class="phase-label">Counting</div><div class="bar green"><span></span></div><div class="phase-score">64%</div></div>
+          <div class="tracker-scroll" id="current-elections-row">
+            <div class="skel skel-card"></div>
+            <div class="skel skel-card"></div>
+            <div class="skel skel-card"></div>
+          </div>
+          <div class="elec-detail-panel" id="elec-detail">
+            <div class="detail-header">
+              <div>
+                <div class="detail-state-name" id="detail-state"></div>
+                <div class="detail-state-hi" id="detail-state-hi"></div>
+              </div>
+              <button class="detail-close" onclick="closeDetail()" aria-label="Close">✕</button>
+            </div>
+            <div class="detail-grid">
+              <div class="detail-cell"><div class="detail-label" data-i18n="detail_type">Election Type</div><div class="detail-value" id="detail-type"></div></div>
+              <div class="detail-cell"><div class="detail-label" data-i18n="detail_seats">Total Seats</div><div class="detail-value" id="detail-seats"></div></div>
+              <div class="detail-cell"><div class="detail-label" data-i18n="detail_poll">Polling Date</div><div class="detail-value" id="detail-poll"></div></div>
+              <div class="detail-cell"><div class="detail-label" data-i18n="detail_count">Counting Date</div><div class="detail-value" id="detail-count"></div></div>
+            </div>
+            <div class="status-badge" id="detail-status-badge" style="margin-bottom:14px;"><span class="status-dot-sm"></span><span id="detail-status-label"></span></div>
+            <button class="btn btn-primary detail-ask-btn" onclick="askAboutElection()">Ask ElectIQ about this election →</button>
+          </div>
+
+          <div class="tracker-heading" style="margin-top:22px;">
+            <div>
+              <h2 data-i18n="tracker_upcoming">📅 Upcoming Elections</h2>
+              <p data-i18n="tracker_upcoming_sub">Confirmed elections in the next 12 months</p>
+            </div>
+          </div>
+          <div class="upcoming-list" id="upcoming-elections-list">
+            <div class="skel" style="height:44px;border-radius:8px;"></div>
+            <div class="skel" style="height:44px;border-radius:8px;"></div>
           </div>
         </div>
+
         <div class="card side-card">
           <div class="section-heading">
             <div><h2>Start with a topic</h2><p>Pick one and ElectIQ opens the assistant with the right question.</p></div>
@@ -1068,10 +1171,11 @@ h1 span { color: var(--saffron-strong); }
           </div>
           <div class="card sidebar-card">
             <h3>Quick questions</h3>
-            <button class="quick-q" onclick="askQuick('How do I check my name in the voter list?')">How do I check my name in the voter list?</button>
-            <button class="quick-q" onclick="askQuick('What is the Model Code of Conduct?')">What is the Model Code of Conduct?</button>
-            <button class="quick-q" onclick="askQuick('What ID documents are accepted at a polling booth?')">What ID documents are accepted at a polling booth?</button>
-            <button class="quick-q" onclick="askQuick('What is NOTA and when can voters use it?')">What is NOTA and when can voters use it?</button>
+            <button class="quick-q" data-i18n="quick_q1" onclick="askQuick('How do I check my name in the voter list?')">How do I check my name in the voter list?</button>
+            <button class="quick-q" data-i18n="quick_q2" onclick="askQuick('What is the Model Code of Conduct?')">What is the Model Code of Conduct?</button>
+            <button class="quick-q" data-i18n="quick_q3" onclick="askQuick('What ID documents are accepted at a polling booth?')">What ID documents are accepted at a polling booth?</button>
+            <button class="quick-q" data-i18n="quick_q4" onclick="askQuick('What is NOTA and when can voters use it?')">What is NOTA and when can voters use it?</button>
+
           </div>
           <div class="card sidebar-card">
             <h3>Official references</h3>
@@ -1565,6 +1669,188 @@ function openCalModal() {
 function closeCal(e) {
   if (e.target.id === 'cal-modal') document.getElementById('cal-modal').classList.remove('open');
 }
+
+// ══════════════════════════════════════════════
+// LANGUAGE TOGGLE  (EN / HI)
+// ══════════════════════════════════════════════
+const TRANSLATIONS = {
+  en: {
+    nav_home:'Overview', nav_timeline:'Election Flow', nav_chat:'Ask AI',
+    nav_factcheck:'Fact Check', nav_quiz:'Quiz', nav_resources:'Resources',
+    tracker_now:'🗳️ Elections Happening Now', tracker_now_sub:'Click any state for schedule details & key dates',
+    tracker_upcoming:'📅 Upcoming Elections', tracker_upcoming_sub:'Confirmed elections in the next 12 months',
+    detail_type:'Election Type', detail_seats:'Total Seats', detail_poll:'Polling Date', detail_count:'Counting Date',
+    metric_elections:'Lok Sabha, Vidhan Sabha, Rajya Sabha, municipal, and panchayat basics.',
+    metric_tools:'AI guide, timeline, quiz generator, and grounded fact-checking.',
+    metric_links:'Designed around official and non-partisan public information.',
+    metric_style:'Clear answers for citizens, students, and first-time voters.',
+    chat_placeholder:'Ask a question about Indian elections...',
+    quick_q1:'How do I check my name in the voter list?',
+    quick_q2:'What is the Model Code of Conduct?',
+    quick_q3:'What ID documents are accepted at a polling booth?',
+    quick_q4:'What is NOTA and when can voters use it?',
+    fc_placeholder:'Example: VVPAT slips are counted for every polling station in India.',
+    event_name_fallback:'Next Election Event',
+  },
+  hi: {
+    nav_home:'सारांश', nav_timeline:'चुनाव प्रक्रिया', nav_chat:'AI से पूछें',
+    nav_factcheck:'तथ्य जाँच', nav_quiz:'क्विज़', nav_resources:'संसाधन',
+    tracker_now:'🗳️ अभी हो रहे चुनाव', tracker_now_sub:'अनुसूची और मुख्य तिथियों के लिए किसी राज्य पर क्लिक करें',
+    tracker_upcoming:'📅 आगामी चुनाव', tracker_upcoming_sub:'अगले 12 महीनों के पुष्टि किए गए चुनाव',
+    detail_type:'चुनाव प्रकार', detail_seats:'कुल सीटें', detail_poll:'मतदान तिथि', detail_count:'मतगणना तिथि',
+    metric_elections:'लोकसभा, विधानसभा, राज्यसभा, नगर निगम और पंचायत की मूल बातें।',
+    metric_tools:'AI गाइड, टाइमलाइन, क्विज़ जेनरेटर और तथ्य-जाँच।',
+    metric_links:'आधिकारिक और निष्पक्ष सार्वजनिक जानकारी पर आधारित।',
+    metric_style:'नागरिकों, छात्रों और पहली बार मतदाताओं के लिए स्पष्ट उत्तर।',
+    chat_placeholder:'भारतीय चुनावों के बारे में प्रश्न पूछें...',
+    quick_q1:'मैं मतदाता सूची में अपना नाम कैसे देखूँ?',
+    quick_q2:'आदर्श आचार संहिता क्या है?',
+    quick_q3:'मतदान केंद्र पर कौन से ID दस्तावेज़ स्वीकार किए जाते हैं?',
+    quick_q4:'NOTA क्या है और मतदाता इसका उपयोग कब कर सकते हैं?',
+    fc_placeholder:'उदाहरण: भारत में VVPAT पर्चियाँ प्रत्येक मतदान केंद्र के लिए गिनी जाती हैं।',
+    event_name_fallback:'अगली चुनाव घटना',
+  }
+};
+
+let currentLang = localStorage.getItem('electiq_lang') || 'en';
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('electiq_lang', lang);
+  // Toggle button states
+  document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+  document.getElementById('lang-hi').classList.toggle('active', lang === 'hi');
+  document.getElementById('lang-en').setAttribute('aria-pressed', lang === 'en');
+  document.getElementById('lang-hi').setAttribute('aria-pressed', lang === 'hi');
+  // Apply all data-i18n text nodes
+  const t = TRANSLATIONS[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) el.textContent = t[key];
+  });
+  // Dynamic targets
+  const inp = document.getElementById('chat-input');
+  if (inp) inp.placeholder = t.chat_placeholder;
+  const fc = document.getElementById('fc-claim');
+  if (fc) fc.placeholder = t.fc_placeholder;
+  // Quick questions
+  const qqs = document.querySelectorAll('.quick-q');
+  const qqKeys = ['quick_q1','quick_q2','quick_q3','quick_q4'];
+  qqs.forEach((el, i) => { if (qqKeys[i] && t[qqKeys[i]]) el.textContent = t[qqKeys[i]]; });
+}
+// Apply saved language on load
+setLang(currentLang);
+
+// ══════════════════════════════════════════════
+// LIVE ELECTION TRACKER
+// ══════════════════════════════════════════════
+let _electionsData = null;
+let _activeElecIdx = null;
+
+const STATUS_LABELS = {
+  en: { voting_today:'Voting Today', voting_soon:'Voting Soon', counting:'Counting', results_out:'Results Out' },
+  hi: { voting_today:'आज मतदान', voting_soon:'जल्द मतदान', counting:'मतगणना', results_out:'परिणाम घोषित' }
+};
+
+async function loadElections() {
+  try {
+    const res = await fetch('/api/elections');
+    if (!res.ok) throw new Error('API error');
+    _electionsData = await res.json();
+    renderCurrentElections(_electionsData.current || []);
+    renderUpcomingElections(_electionsData.upcoming || []);
+    // Update countdown with live event from API
+    if (_electionsData.next_major_event) {
+      const ev = _electionsData.next_major_event;
+      nextEvent.name = ev.name;
+      nextEvent.name_hi = ev.name_hi;
+      nextEvent.date = ev.date_iso;
+      nextEvent.windowStart = new Date().toISOString();
+      updateCountdown();
+    }
+  } catch (e) {
+    document.getElementById('current-elections-row').innerHTML =
+      '<p style="color:var(--muted);padding:12px;" data-i18n="tracker_error">Could not load live election data. Check ECI.gov.in for latest schedules.</p>';
+    document.getElementById('upcoming-elections-list').innerHTML = '';
+  }
+}
+
+function renderCurrentElections(elections) {
+  const row = document.getElementById('current-elections-row');
+  if (!elections.length) {
+    row.innerHTML = '<p style="color:var(--muted);padding:12px;">No elections currently in progress.</p>';
+    return;
+  }
+  row.innerHTML = elections.map((e, i) => {
+    const slang = STATUS_LABELS[currentLang]?.[e.status] || e.status_label || e.status;
+    return `<button class="elec-card" onclick="openDetail(${i})" aria-label="${escHtml(e.state)} election details">
+      <div class="elec-state">${escHtml(e.state)}</div>
+      <div class="elec-state-hi">${escHtml(e.state_hi || '')}</div>
+      <div class="elec-type">${escHtml(e.election_type || '')}</div>
+      <div class="elec-date">${escHtml(e.polling_date || '')}</div>
+      <div class="elec-note">${escHtml(e.note || '')}</div>
+      <div class="status-badge ${escHtml(e.status || '')}"><span class="status-dot-sm"></span>${escHtml(slang)}</div>
+    </button>`;
+  }).join('');
+}
+
+function renderUpcomingElections(upcoming) {
+  const list = document.getElementById('upcoming-elections-list');
+  if (!upcoming.length) { list.innerHTML = ''; return; }
+  list.innerHTML = upcoming.map(u => `
+    <div class="upcoming-row">
+      <div>
+        <div class="upcoming-state">${escHtml(u.state)}</div>
+        <div class="upcoming-state-hi">${escHtml(u.state_hi || '')} &mdash; ${escHtml(u.election_type || '')}</div>
+      </div>
+      <div class="upcoming-period">${escHtml(u.expected_period || '')} &bull; ${u.total_seats || '?'} seats</div>
+    </div>`).join('');
+}
+
+function openDetail(idx) {
+  if (!_electionsData) return;
+  _activeElecIdx = idx;
+  const e = _electionsData.current[idx];
+  // Highlight active card
+  document.querySelectorAll('.elec-card').forEach((c, i) => c.classList.toggle('active', i === idx));
+  document.getElementById('detail-state').textContent = e.state;
+  document.getElementById('detail-state-hi').textContent = e.state_hi || '';
+  document.getElementById('detail-type').textContent = e.election_type || '—';
+  document.getElementById('detail-seats').textContent = e.total_seats ? `${e.total_seats} seats` : '—';
+  document.getElementById('detail-poll').textContent = e.polling_date || '—';
+  document.getElementById('detail-count').textContent = e.counting_date || '—';
+  const badge = document.getElementById('detail-status-badge');
+  badge.className = `status-badge ${e.status || ''}`;
+  badge.innerHTML = `<span class="status-dot-sm"></span><span id="detail-status-label">${escHtml(STATUS_LABELS[currentLang]?.[e.status] || e.status_label || e.status)}</span>`;
+  const panel = document.getElementById('elec-detail');
+  panel.classList.add('open');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeDetail() {
+  document.getElementById('elec-detail').classList.remove('open');
+  document.querySelectorAll('.elec-card').forEach(c => c.classList.remove('active'));
+  _activeElecIdx = null;
+}
+
+function askAboutElection() {
+  if (_activeElecIdx === null || !_electionsData) return;
+  const e = _electionsData.current[_activeElecIdx];
+  const q = currentLang === 'hi'
+    ? `${e.state} में ${e.election_type || 'विधानसभा'} चुनाव के बारे में बताएं — कार्यक्रम, चरण और मुख्य तथ्य।`
+    : `Tell me about the ${e.election_type || 'Assembly'} election in ${e.state} — schedule, phases, and key facts.`;
+  askAbout(q);
+}
+
+// Load elections when home section is visible
+const _origShowSection = showSection;
+function showSection(id) {
+  _origShowSection(id);
+  if (id === 'home' && !_electionsData) loadElections();
+}
+// Auto-load on initial render
+loadElections();
+
 </script>
 </body>
 </html>
