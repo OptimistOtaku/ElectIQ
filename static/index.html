@@ -1377,6 +1377,7 @@ function showSection(id) {
   document.getElementById('section-' + id).classList.add('active');
   document.getElementById('nav-' + id).classList.add('active');
   if (id === 'timeline') renderTimeline(state.selectedPhase);
+  if (id === 'home' && !_electionsData) loadElections();
 }
 
 const timelineData = [
@@ -1842,13 +1843,7 @@ function askAboutElection() {
   askAbout(q);
 }
 
-// Load elections when home section is visible
-const _origShowSection = showSection;
-function showSection(id) {
-  _origShowSection(id);
-  if (id === 'home' && !_electionsData) loadElections();
-}
-// Auto-load on initial render
+// Auto-load elections on initial render
 loadElections();
 
 </script>
