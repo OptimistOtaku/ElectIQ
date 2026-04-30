@@ -406,31 +406,34 @@ def get_elections():
     if not client:
         return jsonify({"error": "AI not configured"}), 500
 
-    today = time.strftime("%d %B %Y")
-    prompt = f"""Today is {today}.
+    from datetime import datetime, timezone, timedelta
+    IST = timezone(timedelta(hours=5, minutes=30))
+    today = datetime.now(IST).strftime("%d %B %Y")
+    prompt = f"""Today's date is exactly {today} (Indian Standard Time).
 
-Search for the latest information on Indian state and national elections.
-Return ONLY a valid JSON object (no markdown, no explanation) with this exact structure:
+You MUST use Google Search to find the very latest information about Indian elections.
+
+Return ONLY a valid JSON object (no markdown, no explanation, no ```json fences) with this structure:
 
 {{
   "current": [
     {{
       "state": "State name in English",
-      "state_hi": "State name in Hindi (Devanagari)",
+      "state_hi": "State name in Hindi (Devanagari script)",
       "election_type": "Assembly" | "Lok Sabha" | "By-election" | "Panchayat",
       "status": "voting_today" | "voting_soon" | "counting" | "results_out",
       "status_label": "Short human-readable status in English",
-      "polling_date": "DD Month YYYY or 'Phase 1: DD Mon, Phase 2: DD Mon'",
-      "counting_date": "DD Month YYYY",
+      "polling_date": "Exact dates like '23 April 2026' or 'Phase 1: 09 Apr, Phase 2: 17 Apr'",
+      "counting_date": "Exact date like '04 May 2026'",
       "total_seats": 123,
       "phases": 1,
-      "note": "Brief context e.g. 'Phase 2 of 3' or 'Results declared'"
+      "note": "Brief context e.g. 'Phase 2 of 3' or 'Counting on 4 May'"
     }}
   ],
   "upcoming": [
     {{
       "state": "State name in English",
-      "state_hi": "State name in Hindi (Devanagari)",
+      "state_hi": "State name in Hindi (Devanagari script)",
       "election_type": "Assembly" | "Lok Sabha" | "By-election",
       "expected_period": "Month–Month YYYY",
       "total_seats": 123,
@@ -438,14 +441,19 @@ Return ONLY a valid JSON object (no markdown, no explanation) with this exact st
     }}
   ],
   "next_major_event": {{
-    "name": "Event name e.g. 'West Bengal Counting Day'",
-    "name_hi": "Event name in Hindi",
+    "name": "Name of the very next election event from today {today}",
+    "name_hi": "Same event name in Hindi",
     "date_iso": "YYYY-MM-DDTHH:MM:SS+05:30"
   }}
 }}
 
-Include all elections that are currently in progress (nomination, campaigning, polling, or counting phases) AND confirmed upcoming elections in the next 12 months.
-Be accurate and use official ECI sources. Return ONLY the JSON."""
+IMPORTANT RULES:
+- "current" = elections where ANY phase (notification, nomination, polling, counting) is happening within 30 days before or after today ({today}).
+- "upcoming" = elections expected in the next 12 months that haven't started yet.
+- next_major_event must be the chronologically NEXT event AFTER today {today}.
+- All dates must be EXACT dates from ECI announcements, not approximate.
+- Do NOT include elections whose results were declared more than 30 days ago.
+- Return ONLY the JSON object, nothing else."""
 
     try:
         response = client.models.generate_content(

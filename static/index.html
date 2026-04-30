@@ -962,27 +962,27 @@ h1 span { color: var(--saffron-strong); }
     <section class="section active" id="section-home">
       <div class="hero-grid">
         <div class="hero-panel hero-copy">
-          <span class="kicker">Non-partisan civic assistant</span>
-          <h1>Understand Indian elections with <span>clarity</span>.</h1>
-          <p class="lead">ElectIQ turns voter registration, EVM/VVPAT, polling day rules, counting, and official election resources into simple, verifiable guidance for citizens and first-time voters.</p>
+          <span class="kicker" data-i18n="hero_kicker">Non-partisan civic assistant</span>
+          <h1 data-i18n="hero_heading">Understand Indian elections with <span>clarity</span>.</h1>
+          <p class="lead" data-i18n="hero_lead">ElectIQ turns voter registration, EVM/VVPAT, polling day rules, counting, and official election resources into simple, verifiable guidance for citizens and first-time voters.</p>
           <div class="action-row">
             <button class="btn btn-primary" onclick="showSection('chat')">
               <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8Z" stroke="currentColor" stroke-width="2"/></svg>
-              Ask ElectIQ
+              <span data-i18n="btn_ask">Ask ElectIQ</span>
             </button>
             <button class="btn btn-saffron" onclick="showSection('factcheck')">
               <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="m9 12 2 2 4-5M12 3l8 4v5c0 5-3.4 8.7-8 9-4.6-.3-8-4-8-9V7l8-4Z" stroke="currentColor" stroke-width="2"/></svg>
-              Verify a Claim
+              <span data-i18n="btn_verify">Verify a Claim</span>
             </button>
             <button class="btn btn-ghost" onclick="openCalModal()">
               <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M7 3v4M17 3v4M4 9h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="2"/></svg>
-              Save Dates
+              <span data-i18n="btn_dates">Save Dates</span>
             </button>
           </div>
           <div class="trust-strip" aria-label="ElectIQ trust principles">
-            <div class="trust-pill"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="m9 12 2 2 4-5M12 3l8 4v5c0 5-3.4 8.7-8 9-4.6-.3-8-4-8-9V7l8-4Z" stroke="currentColor" stroke-width="2"/></svg>Neutral by design</div>
-            <div class="trust-pill"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M4 5h16M4 12h10M4 19h16" stroke="currentColor" stroke-width="2"/></svg>Plain-language answers</div>
-            <div class="trust-pill"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M10 13a5 5 0 0 0 7.1 0l2-2a5 5 0 0 0-7.1-7.1M14 11a5 5 0 0 0-7.1 0l-2 2A5 5 0 0 0 12 20.1" stroke="currentColor" stroke-width="2"/></svg>Official-source oriented</div>
+            <div class="trust-pill"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="m9 12 2 2 4-5M12 3l8 4v5c0 5-3.4 8.7-8 9-4.6-.3-8-4-8-9V7l8-4Z" stroke="currentColor" stroke-width="2"/></svg><span data-i18n="trust_neutral">Neutral by design</span></div>
+            <div class="trust-pill"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M4 5h16M4 12h10M4 19h16" stroke="currentColor" stroke-width="2"/></svg><span data-i18n="trust_plain">Plain-language answers</span></div>
+            <div class="trust-pill"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M10 13a5 5 0 0 0 7.1 0l2-2a5 5 0 0 0-7.1-7.1M14 11a5 5 0 0 0-7.1 0l-2 2A5 5 0 0 0 12 20.1" stroke="currentColor" stroke-width="2"/></svg><span data-i18n="trust_official">Official-source oriented</span></div>
           </div>
         </div>
         <div class="hero-panel hero-visual">
@@ -1679,6 +1679,11 @@ const TRANSLATIONS = {
   en: {
     nav_home:'Overview', nav_timeline:'Election Flow', nav_chat:'Ask AI',
     nav_factcheck:'Fact Check', nav_quiz:'Quiz', nav_resources:'Resources',
+    hero_kicker:'Non-partisan civic assistant',
+    hero_heading:'Understand Indian elections with clarity.',
+    hero_lead:'ElectIQ turns voter registration, EVM/VVPAT, polling day rules, counting, and official election resources into simple, verifiable guidance for citizens and first-time voters.',
+    btn_ask:'Ask ElectIQ', btn_verify:'Verify a Claim', btn_dates:'Save Dates',
+    trust_neutral:'Neutral by design', trust_plain:'Plain-language answers', trust_official:'Official-source oriented',
     tracker_now:'🗳️ Elections Happening Now', tracker_now_sub:'Click any state for schedule details & key dates',
     tracker_upcoming:'📅 Upcoming Elections', tracker_upcoming_sub:'Confirmed elections in the next 12 months',
     detail_type:'Election Type', detail_seats:'Total Seats', detail_poll:'Polling Date', detail_count:'Counting Date',
@@ -1697,6 +1702,11 @@ const TRANSLATIONS = {
   hi: {
     nav_home:'सारांश', nav_timeline:'चुनाव प्रक्रिया', nav_chat:'AI से पूछें',
     nav_factcheck:'तथ्य जाँच', nav_quiz:'क्विज़', nav_resources:'संसाधन',
+    hero_kicker:'निष्पक्ष नागरिक सहायक',
+    hero_heading:'भारतीय चुनावों को स्पष्टता से समझें।',
+    hero_lead:'ElectIQ मतदाता पंजीकरण, EVM/VVPAT, मतदान दिवस नियम, मतगणना और आधिकारिक चुनाव संसाधनों को नागरिकों और पहली बार मतदाताओं के लिए सरल, सत्यापन योग्य मार्गदर्शन में बदलता है।',
+    btn_ask:'ElectIQ से पूछें', btn_verify:'दावा सत्यापित करें', btn_dates:'तिथियाँ सहेजें',
+    trust_neutral:'निष्पक्ष डिज़ाइन', trust_plain:'सरल भाषा में उत्तर', trust_official:'आधिकारिक स्रोत आधारित',
     tracker_now:'🗳️ अभी हो रहे चुनाव', tracker_now_sub:'अनुसूची और मुख्य तिथियों के लिए किसी राज्य पर क्लिक करें',
     tracker_upcoming:'📅 आगामी चुनाव', tracker_upcoming_sub:'अगले 12 महीनों के पुष्टि किए गए चुनाव',
     detail_type:'चुनाव प्रकार', detail_seats:'कुल सीटें', detail_poll:'मतदान तिथि', detail_count:'मतगणना तिथि',
