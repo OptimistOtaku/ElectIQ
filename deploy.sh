@@ -45,9 +45,9 @@ gcloud services enable \
   aiplatform.googleapis.com \
   --quiet
 
-# ── Step 3: Build with Cloud Build (no local Docker needed) ──
-echo "🐳 Building Docker image via Cloud Build..."
-gcloud builds submit --tag "$IMAGE" --quiet
+# ── Step 3: Build with Cloud Build (no-cache to ensure fresh deploy) ──
+echo "🐳 Building Docker image via Cloud Build (no-cache)..."
+gcloud builds submit --config cloudbuild.yaml --substitutions="_IMAGE=$IMAGE" --quiet
 
 # ── Step 4: Prepare environment variables ──
 ENV_VARS="GOOGLE_CLOUD_PROJECT=${PROJECT_ID},GOOGLE_CLOUD_LOCATION=${REGION}"

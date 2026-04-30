@@ -235,6 +235,17 @@ def user_facing_error(exc, fallback="Something went wrong. Please try again."):
 # ──────────────────────────────────────────────
 # Routes — Static
 # ──────────────────────────────────────────────
+@app.after_request
+def add_cache_headers(response):
+    """Prevent browser caching of HTML pages so deployments take effect immediately."""
+    if response.content_type and 'text/html' in response.content_type:
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+    response.headers['X-ElectIQ-Version'] = '2026-04-30-v2'
+    return response
+
+
 @app.route("/")
 def index():
     """Serve the main SPA frontend."""
