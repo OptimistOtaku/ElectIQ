@@ -1318,10 +1318,16 @@ const state = {
 };
 
 const nextEvent = {
-  name: 'Voter Registration Deadline',
-  date: '2026-09-15T23:59:59+05:30',
-  windowStart: '2026-04-28T00:00:00+05:30',
+  name: 'Vote Counting Day — All States',
+  name_hi: 'मतगणना दिवस — सभी राज्य',
+  date: '2026-05-04T08:00:00+05:30',
+  windowStart: '2026-04-09T00:00:00+05:30',
 };
+
+// ── Global state (must be declared before any function call) ──
+let currentLang = localStorage.getItem('electiq_lang') || 'en';
+let _electionsData = null;
+let _activeElecIdx = null;
 
 function pad2(n) {
   return String(Math.max(0, n)).padStart(2, '0');
@@ -1750,9 +1756,7 @@ const TRANSLATIONS = {
   }
 };
 
-let currentLang = localStorage.getItem('electiq_lang') || 'en';
-let _electionsData = null;
-let _activeElecIdx = null;
+// (currentLang, _electionsData, _activeElecIdx declared at top of script)
 
 function setLang(lang) {
   if (!TRANSLATIONS[lang]) lang = 'en';
