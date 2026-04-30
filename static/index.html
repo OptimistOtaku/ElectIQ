@@ -1329,9 +1329,10 @@ function pad2(n) {
 
 function buildCalendarLink(event) {
   const start = new Date(event.date);
-  const y = start.getUTCFullYear();
-  const m = pad2(start.getUTCMonth() + 1);
-  const d = pad2(start.getUTCDate());
+  if (Number.isNaN(start.getTime())) return '#';
+  const y = start.getFullYear();
+  const m = pad2(start.getMonth() + 1);
+  const d = pad2(start.getDate());
   return 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
     `&text=${encodeURIComponent(event.name)}` +
     `&dates=${y}${m}${d}/${y}${m}${d}` +
@@ -1342,6 +1343,7 @@ function updateCountdown() {
   const eventDate = new Date(nextEvent.date);
   const startDate = new Date(nextEvent.windowStart);
   const now = new Date();
+  if (Number.isNaN(eventDate.getTime())) return;
   const diff = Math.max(0, eventDate - now);
   const totalSeconds = Math.floor(diff / 1000);
   const days = Math.floor(totalSeconds / 86400);
@@ -1353,7 +1355,7 @@ function updateCountdown() {
     const el = document.getElementById(id);
     if (el) el.textContent = value;
   };
-  setText('event-name', nextEvent.name);
+  setText('event-name', currentLang === 'hi' && nextEvent.name_hi ? nextEvent.name_hi : nextEvent.name);
   setText('count-days', pad2(days));
   setText('count-hours', pad2(hours));
   setText('count-mins', pad2(mins));
@@ -1373,10 +1375,13 @@ updateCountdown();
 window.setInterval(updateCountdown, 1000);
 
 function showSection(id) {
+  const section = document.getElementById('section-' + id);
+  const nav = document.getElementById('nav-' + id);
+  if (!section || !nav) return;
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
-  document.getElementById('section-' + id).classList.add('active');
-  document.getElementById('nav-' + id).classList.add('active');
+  section.classList.add('active');
+  nav.classList.add('active');
   if (id === 'timeline') renderTimeline(state.selectedPhase);
   if (id === 'home' && !_electionsData) loadElections();
 }
@@ -1418,7 +1423,12 @@ function showPhase(phase, btn) {
 renderTimeline('all');
 
 function escHtml(t) {
-  return (t || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return String(t ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
 }
 function formatMarkdown(text) {
   return escHtml(text)
@@ -1492,21 +1502,26 @@ async function sendMessage() {
 
     const el = document.createElement('div');
     el.className = 'msg assistant';
-    el.innerHTML = `<div class="msg-avatar">${avatarSvg()}</div><div class="msg-bubble" id="stream-bubble"><span class="typing-indicator"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span></div>`;
+    const bubbleId = `stream-bubble-${Date.now()}`;
+    el.innerHTML = `<div class="msg-avatar">${avatarSvg()}</div><div class="msg-bubble" id="${bubbleId}"><span class="typing-indicator"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span></div>`;
     document.getElementById('chat-messages').appendChild(el);
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
     let fullText = '';
-    const bubble = document.getElementById('stream-bubble');
+    let pending = '';
+    let streamDone = false;
+    const bubble = document.getElementById(bubbleId);
 
-    while (true) {
+    while (!streamDone) {
       const { done, value } = await reader.read();
       if (done) break;
-      const chunk = decoder.decode(value, { stream: true });
-      for (const line of chunk.split('\n')) {
+      pending += decoder.decode(value, { stream: true });
+      const lines = pending.split('\n');
+      pending = lines.pop() || '';
+      for (const line of lines) {
         if (!line.startsWith('data: ')) continue;
         const payload = line.slice(6).trim();
-        if (payload === '[DONE]') break;
+        if (payload === '[DONE]') { streamDone = true; break; }
         try {
           const parsed = JSON.parse(payload);
           if (parsed.text) {
@@ -1514,7 +1529,12 @@ async function sendMessage() {
             bubble.innerHTML = formatMarkdown(fullText);
             el.scrollIntoView({ behavior: 'smooth', block: 'end' });
           }
-          if (parsed.error) bubble.textContent = parsed.error;
+          if (parsed.error) {
+            fullText = parsed.error;
+            bubble.textContent = parsed.error;
+            streamDone = true;
+            break;
+          }
         } catch (err) {}
       }
     }
@@ -1544,7 +1564,7 @@ async function startQuiz() {
       body: JSON.stringify({ topic: state.quizTopic })
     });
     const data = await res.json();
-    if (!data.questions) throw new Error(data.error || 'No questions returned');
+    if (!Array.isArray(data.questions) || !data.questions.length) throw new Error(data.error || 'No questions returned');
     state.quizQuestions = data.questions;
     state.quizIndex = 0;
     state.quizScore = 0;
@@ -1560,6 +1580,10 @@ async function startQuiz() {
 function renderQuestion() {
   const q = state.quizQuestions[state.quizIndex];
   const total = state.quizQuestions.length;
+  if (!q || !Array.isArray(q.options) || !q.options.length) {
+    restartQuiz();
+    return;
+  }
   document.getElementById('progress-fill').style.width = `${(state.quizIndex / total) * 100}%`;
   document.getElementById('progress-text').textContent = `${state.quizIndex + 1} / ${total}`;
   document.getElementById('quiz-question').textContent = q.question;
@@ -1572,10 +1596,11 @@ function renderQuestion() {
 function selectAnswer(idx) {
   const q = state.quizQuestions[state.quizIndex];
   const btns = document.querySelectorAll('.option-btn');
+  if (!q || !btns.length || q.correct < 0 || q.correct >= btns.length) return;
   btns.forEach(b => b.disabled = true);
   btns[q.correct].classList.add('correct');
   if (idx === q.correct) state.quizScore++;
-  else btns[idx].classList.add('wrong');
+  else if (btns[idx]) btns[idx].classList.add('wrong');
   const exp = document.getElementById('quiz-explanation');
   exp.textContent = q.explanation || '';
   exp.style.display = 'block';
@@ -1591,7 +1616,7 @@ function showResult() {
   document.getElementById('quiz-play').style.display = 'none';
   document.getElementById('quiz-result').style.display = 'block';
   const total = state.quizQuestions.length;
-  const pct = state.quizScore / total;
+  const pct = total ? state.quizScore / total : 0;
   document.getElementById('result-score').textContent = `${state.quizScore}/${total}`;
   document.getElementById('result-msg').textContent = pct >= .8 ? 'Strong civic knowledge.' : pct >= .6 ? 'Good base. Review the timeline for more detail.' : 'Keep learning with the assistant and try again.';
 }
@@ -1656,7 +1681,8 @@ const calEvents = [
   { title:'Find polling station', date:'2026-04-01', note:'Confirm polling booth and route before election day.' },
 ];
 function makeGCalLink(event) {
-  const d = event.date.replace(/-/g,'');
+  const d = String(event.date || '').replace(/-/g,'');
+  if (!/^\d{8}$/.test(d)) return '#';
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${d}/${d}&details=${encodeURIComponent(event.note)}`;
 }
 function openCalModal() {
@@ -1725,8 +1751,11 @@ const TRANSLATIONS = {
 };
 
 let currentLang = localStorage.getItem('electiq_lang') || 'en';
+let _electionsData = null;
+let _activeElecIdx = null;
 
 function setLang(lang) {
+  if (!TRANSLATIONS[lang]) lang = 'en';
   currentLang = lang;
   localStorage.setItem('electiq_lang', lang);
   // Toggle button states
@@ -1749,6 +1778,12 @@ function setLang(lang) {
   const qqs = document.querySelectorAll('.quick-q');
   const qqKeys = ['quick_q1','quick_q2','quick_q3','quick_q4'];
   qqs.forEach((el, i) => { if (qqKeys[i] && t[qqKeys[i]]) el.textContent = t[qqKeys[i]]; });
+  updateCountdown();
+  if (_electionsData) {
+    renderCurrentElections(_electionsData.current || []);
+    renderUpcomingElections(_electionsData.upcoming || []);
+    if (_activeElecIdx !== null) openDetail(_activeElecIdx);
+  }
 }
 // Apply saved language on load
 setLang(currentLang);
@@ -1756,9 +1791,6 @@ setLang(currentLang);
 // ══════════════════════════════════════════════
 // LIVE ELECTION TRACKER
 // ══════════════════════════════════════════════
-let _electionsData = null;
-let _activeElecIdx = null;
-
 const STATUS_LABELS = {
   en: { voting_today:'Voting Today', voting_soon:'Voting Soon', counting:'Counting', results_out:'Results Out' },
   hi: { voting_today:'आज मतदान', voting_soon:'जल्द मतदान', counting:'मतगणना', results_out:'परिणाम घोषित' }
@@ -1774,9 +1806,9 @@ async function loadElections() {
     // Update countdown with live event from API
     if (_electionsData.next_major_event) {
       const ev = _electionsData.next_major_event;
-      nextEvent.name = ev.name;
-      nextEvent.name_hi = ev.name_hi;
-      nextEvent.date = ev.date_iso;
+      nextEvent.name = ev.name || TRANSLATIONS.en.event_name_fallback;
+      nextEvent.name_hi = ev.name_hi || '';
+      if (ev.date_iso) nextEvent.date = ev.date_iso;
       nextEvent.windowStart = new Date().toISOString();
       updateCountdown();
     }
@@ -1789,6 +1821,7 @@ async function loadElections() {
 
 function renderCurrentElections(elections) {
   const row = document.getElementById('current-elections-row');
+  if (!row) return;
   if (!elections.length) {
     row.innerHTML = '<p style="color:var(--muted);padding:12px;">No elections currently in progress.</p>';
     return;
@@ -1808,6 +1841,7 @@ function renderCurrentElections(elections) {
 
 function renderUpcomingElections(upcoming) {
   const list = document.getElementById('upcoming-elections-list');
+  if (!list) return;
   if (!upcoming.length) { list.innerHTML = ''; return; }
   list.innerHTML = upcoming.map(u => `
     <div class="upcoming-row">
@@ -1820,7 +1854,7 @@ function renderUpcomingElections(upcoming) {
 }
 
 function openDetail(idx) {
-  if (!_electionsData) return;
+  if (!_electionsData || !_electionsData.current || !_electionsData.current[idx]) return;
   _activeElecIdx = idx;
   const e = _electionsData.current[idx];
   // Highlight active card
