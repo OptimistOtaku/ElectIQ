@@ -234,12 +234,12 @@
             <div><strong>ElectIQ Assistant</strong><span>Grounded civic guidance for Indian election process questions</span></div>
             <div class="status-dot" aria-label="Assistant available"></div>
           </div>
-          <div class="chat-messages" id="chat-messages">
+          <div class="chat-messages" id="chat-messages" aria-live="polite" aria-relevant="additions">
             <div class="msg assistant"><div class="msg-avatar"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="2"/></svg></div><div class="msg-bubble"><strong>Welcome to ElectIQ.</strong><br>Ask me about voter registration, EVM/VVPAT, the Model Code of Conduct, polling booth lookup, counting, results, or official election resources.</div></div>
           </div>
           <div class="chat-input-row">
-            <textarea id="chat-input" placeholder="Ask a question about Indian elections..." onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-            <button class="btn btn-primary send-btn" id="send-btn" onclick="sendMessage()" aria-label="Send message"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="m22 2-7 20-4-9-9-4 20-7Z" stroke="currentColor" stroke-width="2"/></svg></button>
+            <textarea id="chat-input" placeholder="Ask a question about Indian elections..." onkeydown="handleKey(event)" oninput="autoResize(this)" aria-label="Message ElectIQ Assistant"></textarea>
+            <button type="button" class="btn btn-primary send-btn" id="send-btn" onclick="sendMessage()" aria-label="Send message to ElectIQ"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="m22 2-7 20-4-9-9-4 20-7Z" stroke="currentColor" stroke-width="2"/></svg></button>
           </div>
         </div>
         <aside class="chat-sidebar">
@@ -249,17 +249,17 @@
             <div class="sidebar-stat"><span>Mode</span><span>Neutral</span></div>
             <div class="sidebar-stat"><span>Format</span><span>Steps</span></div>
           </div>
-          <div class="card sidebar-card">
-            <h3>Quick questions</h3>
-            <button class="quick-q" data-i18n="quick_q1" onclick="askQuick('How do I check my name in the voter list?')">How do I check my name in the voter list?</button>
-            <button class="quick-q" data-i18n="quick_q2" onclick="askQuick('What is the Model Code of Conduct?')">What is the Model Code of Conduct?</button>
-            <button class="quick-q" data-i18n="quick_q3" onclick="askQuick('What ID documents are accepted at a polling booth?')">What ID documents are accepted at a polling booth?</button>
-            <button class="quick-q" data-i18n="quick_q4" onclick="askQuick('What is NOTA and when can voters use it?')">What is NOTA and when can voters use it?</button>
+          <div class="card sidebar-card" role="region" aria-labelledby="quick-q-title">
+            <h3 id="quick-q-title">Quick questions</h3>
+            <button type="button" class="quick-q" data-i18n="quick_q1" onclick="askQuick('How do I check my name in the voter list?')" aria-label="Ask about checking name in voter list">How do I check my name in the voter list?</button>
+            <button type="button" class="quick-q" data-i18n="quick_q2" onclick="askQuick('What is the Model Code of Conduct?')" aria-label="Ask about Model Code of Conduct">What is the Model Code of Conduct?</button>
+            <button type="button" class="quick-q" data-i18n="quick_q3" onclick="askQuick('What ID documents are accepted at a polling booth?')" aria-label="Ask about accepted ID documents">What ID documents are accepted at a polling booth?</button>
+            <button type="button" class="quick-q" data-i18n="quick_q4" onclick="askQuick('What is NOTA and when can voters use it?')" aria-label="Ask about NOTA option">What is NOTA and when can voters use it?</button>
           </div>
-          <div class="card sidebar-card">
-            <h3>Most Asked Topics <span style="font-size: 12px; font-weight: normal; float: right; opacity: 0.6;">via BigQuery</span></h3>
+          <div class="card sidebar-card" role="region" aria-labelledby="trending-title">
+            <h3 id="trending-title">Most Asked Topics <span style="font-size: 12px; font-weight: normal; float: right; opacity: 0.6;">via BigQuery</span></h3>
             <div id="trending-topics-list" style="display: flex; flex-direction: column; gap: 8px;">
-              <span class="typing-indicator" style="align-self: center; margin-top: 10px;"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span>
+              <span class="typing-indicator" role="status" aria-live="polite" style="align-self: center; margin-top: 10px;"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span>
             </div>
           </div>
           <div class="card sidebar-card">

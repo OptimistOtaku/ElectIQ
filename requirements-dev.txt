@@ -1,0 +1,11 @@
+pytest
+pytest-cov
+responses
+flask-limiter
+google-cloud-bigquery
+google-cloud-translate
+google-cloud-firestore
+google-genai
+gunicorn
+flask-cors
+python-dotenv
